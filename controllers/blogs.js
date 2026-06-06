@@ -29,10 +29,17 @@ router.get('/:id', blogFinder, async (req, res) => {
 })
 
 router.put('/:id', blogFinder, async (req, res) => {
-  req.blog.important = req.body.important
+  req.blog.likes = req.body.likes
   await req.blog.save()
   res.json(req.blog)
 })
+/*
+e.g in PowerShell
+Invoke-RestMethod `
+  -Uri http://localhost:3001/api/blogs/1 `
+  -Method Put `
+  -ContentType "application/json" `
+  -Body '{"likes":3}' */
 
 router.delete('/:id', blogFinder, async (req, res) => {
   await req.blog.destroy()
