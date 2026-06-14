@@ -1,0 +1,48 @@
+@baseUrl = http://localhost:3001/api
+@username = testuser1
+
+### 1. Create a user
+# @name createUser
+POST {{baseUrl}}/users
+Content-Type: application/json
+
+{
+  "username": "{{username}}",
+  "name": "Test User",
+  "password": "secret"
+}
+
+
+### 2. Get all users
+GET {{baseUrl}}/users
+
+
+### 3. Update user's name by username
+PUT {{baseUrl}}/users/{{username}}
+Content-Type: application/json
+
+{
+  "name": "Updated Test User"
+}
+
+
+### 4. Get all users again
+GET {{baseUrl}}/users
+
+
+### 5. Create blog for the created user
+# @name createBlog
+POST {{baseUrl}}/blogs
+Content-Type: application/json
+
+{
+  "title": "Blog owned by user",
+  "author": "Autor",
+  "url": "https://example.com/blog-owned-by-user",
+  "likes": 3,
+  "userId": {{createUser.response.body.$.id}}
+}
+
+
+### 6. Get all blogs
+GET {{baseUrl}}/blogs

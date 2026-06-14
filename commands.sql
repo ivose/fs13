@@ -21,3 +21,25 @@ VALUES
   ('Dan Abramov', 'https://overreacted.io/', 'Overreacted', 5);
 
 ---- e.g can be use DBeaver
+
+----use this before e08
+
+-- if needed then
+INSERT INTO users (name, username) VALUES ('Root', 'root');
+
+-- these everyway
+ALTER TABLE notes
+ALTER COLUMN date TYPE TIMESTAMP WITH TIME ZONE
+USING CURRENT_DATE + date;
+
+
+ALTER TABLE users ADD COLUMN created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW();
+ALTER TABLE users ADD COLUMN updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW();
+
+ALTER TABLE notes ADD COLUMN created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW();
+ALTER TABLE notes ADD COLUMN updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW();
+
+ALTER TABLE blogs ADD COLUMN created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW();
+ALTER TABLE blogs ADD COLUMN updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW();
+
+UPDATE TABLE blogs SET user_id = 1;
