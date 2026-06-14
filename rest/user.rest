@@ -1,5 +1,5 @@
 @baseUrl = http://localhost:3001/api
-@username = testuser1
+@username = testuser1@example.com
 
 ### 1. Create a user
 # @name createUser
