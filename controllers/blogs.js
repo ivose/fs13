@@ -1,6 +1,8 @@
+const jwt = require('jsonwebtoken')
 const router = require('express').Router()
 
-const { Blog } = require('../models')
+const { SECRET } = require('../util/config')
+const { Blog, User } = require('../models')
 
 const blogFinder = async (req, res, next) => {
   try {
@@ -14,6 +16,14 @@ const blogFinder = async (req, res, next) => {
   }
 }
 
+const tokenExtractor = (req) => {
+  const authorization = req.get('authorization')
+  if (authorization && authorization.toLowerCase().startsWith('bearer ')) {
+    return authorization.substring(7)
+  }
+  return null
+}
+
 router.get('/', async (req, res) => {
   const blogs = await Blog.findAll()
   res.json(blogs)
@@ -21,7 +31,22 @@ router.get('/', async (req, res) => {
 
 router.post('/', async (req, res, next) => {
   try {
-    const blog = await Blog.create(req.body)
+    const token = tokenExtractor(req)
+    if (!token) {
+      return res.status(401).json({ error: 'token missing' })
+    }
+
+    const decodedToken = jwt.verify(token, SECRET)
+    if (!decodedToken.id) {
+      return res.status(401).json({ error: 'token invalid' })
+    }
+
+    const user = await User.findByPk(decodedToken.id)
+    if (!user) {
+      return res.status(401).json({ error: 'user not found' })
+    }
+
+    const blog = await Blog.create({ ...req.body, userId: user.id })
     res.json(blog)
   } catch(error) {
     next(error)
@@ -49,9 +74,27 @@ Invoke-RestMethod `
   -ContentType "application/json" `
   -Body '{"likes":3}' */
 
-router.delete('/:id', blogFinder, async (req, res) => {
-  await req.blog.destroy()
-  res.status(204).end()
+router.delete('/:id', blogFinder, async (req, res, next) => {
+  try {
+    const token = tokenExtractor(req)
+    if (!token) {
+      return res.status(401).json({ error: 'token missing' })
+    }
+
+    const decodedToken = jwt.verify(token, SECRET)
+    if (!decodedToken.id) {
+      return res.status(401).json({ error: 'token invalid' })
+    }
+
+    if (req.blog.userId !== decodedToken.id) {
+      return res.status(403).json({ error: 'unauthorized' })
+    }
+
+    await req.blog.destroy()
+    res.status(204).end()
+  } catch (error) {
+    next(error)
+  }
 })
 
 module.exports = router

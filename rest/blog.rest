@@ -1,0 +1,44 @@
+@baseUrl = http://localhost:3001/api
+
+POST {{baseUrl}}/login
+Content-Type: application/json
+
+{
+  "username": "testuser1@example.com",
+  "password": "secret"
+}
+
+POST {{baseUrl}}/blogs
+Content-Type: application/json
+Authorization: Bearer eyJh... # get the token with login request
+
+{
+  "title": "Blog by authenticated user",
+  "author": "Author",
+  "url": "https://example.com/blog-1",
+  "likes": 5
+}
+
+GET {{baseUrl}}/blogs
+
+POST {{baseUrl}}/blogs
+Content-Type: application/json
+
+{
+  "title": "Unauthorized blog",
+  "author": "Author",
+  "url": "https://example.com/blog-2",
+  "likes": 1
+}
+
+
+GET {{baseUrl}}/blogs/1
+
+
+PUT {{baseUrl}}/blogs/1
+Content-Type: application/json
+
+{
+  "likes": 20
+}
+
