@@ -13,7 +13,7 @@ router.post('/', async (request, response) => {
     }
   })
 
-  const passwordCorrect = body.password === 'secret'
+  const passwordCorrect = user && body.password === user.password
 
   if (!(user && passwordCorrect)) {
     return response.status(401).json({

@@ -9,7 +9,8 @@
   "scripts": {
     "dev": "nodemon index.js",
     "start": "node index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start:test": "cross-env TESTING=true node index.js",
+    "test": "cross-env TESTING=true node --test --test-concurrency=1 tests/api_ch3.test.js"
   },
   "dependencies": {
     "dotenv": "^17.4.2",
@@ -18,5 +19,9 @@
     "nodemon": "^3.1.14",
     "pg": "^8.21.0",
     "sequelize": "^6.37.8"
+  },
+  "devDependencies": {
+    "axios": "^1.17.0",
+    "cross-env": "^10.1.0"
   }
 }

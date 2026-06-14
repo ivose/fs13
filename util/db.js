@@ -7,15 +7,18 @@ const sequelize = new Sequelize(DATABASE_URL, {
       require: true,
       rejectUnauthorized: false
     }
-  },
-});
+  }
+})
 
 const connectToDatabase = async () => {
   try {
     await sequelize.authenticate()
     console.log('connected to the database')
+    console.log(DATABASE_URL)
   } catch (err) {
     console.log('failed to connect to the database')
+    console.log(err.message)
+    console.log('DATABASE_URL exists:', Boolean(DATABASE_URL))
     return process.exit(1)
   }
 
