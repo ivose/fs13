@@ -43,7 +43,8 @@ router.get('/', async (req, res) => {
         { title: { [Op.substring]: req.query.search ? req.query.search : '' } },
         { author: { [Op.substring]: req.query.search ? req.query.search : '' } }
       ]
-    }
+    },
+    order: [['likes', 'DESC']]
   })
   res.json(blogs)
 })

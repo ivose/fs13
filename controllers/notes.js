@@ -21,7 +21,8 @@ router.get('/', async (req, res) => {
       content: {
         [Op.substring]: req.query.search ? req.query.search : ''
       }
-    }
+    },
+    order: [['date', 'DESC']]
   })
   res.json(notes)
 })
