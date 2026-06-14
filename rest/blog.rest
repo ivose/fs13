@@ -42,3 +42,5 @@ Content-Type: application/json
   "likes": 20
 }
 
+DELETE {{baseUrl}}/blogs/1
+Authorization: Bearer Bearer eyJh... # get the token with login request
