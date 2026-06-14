@@ -6,7 +6,12 @@ const { Blog, User } = require('../models')
 
 const blogFinder = async (req, res, next) => {
   try {
-    req.blog = await Blog.findByPk(req.params.id)
+    req.blog = await Blog.findByPk(req.params.id, {
+      include: {
+        model: User,
+        attributes: ['name']
+      }
+    })
     if (!req.blog) {
       return res.status(404).end()
     }
@@ -25,7 +30,12 @@ const tokenExtractor = (req) => {
 }
 
 router.get('/', async (req, res) => {
-  const blogs = await Blog.findAll()
+  const blogs = await Blog.findAll({
+    include: {
+      model: User,
+      attributes: ['name']
+    }
+  })
   res.json(blogs)
 })
 
@@ -48,7 +58,7 @@ router.post('/', async (req, res, next) => {
 
     const blog = await Blog.create({ ...req.body, userId: user.id })
     res.json(blog)
-  } catch(error) {
+  } catch (error) {
     next(error)
   }
 })
@@ -62,7 +72,7 @@ router.put('/:id', blogFinder, async (req, res, next) => {
     req.blog.likes = req.body.likes
     await req.blog.save()
     res.json(req.blog)
-  } catch(error) {
+  } catch (error) {
     next(error)
   }
 })

@@ -5,7 +5,7 @@ const { Note, User } = require('../models')
 const { SECRET } = require('../util/config')
 
 router.get('/', async (req, res) => {
-  const notes = await Note.findAll({ 
+  const notes = await Note.findAll({
     attributes: { exclude: ['userId'] },
     include: {
       model: User,
@@ -36,15 +36,20 @@ const tokenExtractor = (req, res, next) => {
 router.post('/', tokenExtractor, async (req, res) => {
   try {
     const user = await User.findByPk(req.decodedToken.id)
-    const note = await Note.create({...req.body, userId: user.id, date: new Date()})
+    const note = await Note.create({ ...req.body, userId: user.id, date: new Date() })
     res.json(note)
-  } catch(error) {
+  } catch (error) {
     return res.status(400).json({ error })
   }
 })
 
 const noteFinder = async (req, res, next) => {
-  req.note = await Note.findByPk(req.params.id)
+  req.note = await Note.findByPk(req.params.id, {
+    include: {
+      model: User,
+      attributes: ['name']
+    }
+  })
   if (!req.note) {
     return res.status(404).end()
   }
