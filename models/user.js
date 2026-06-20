@@ -28,6 +28,14 @@ User.init({
       notEmpty: true
     }
   },
+  admin: {    
+    type: DataTypes.BOOLEAN,    
+    defaultValue: false  
+  },
+  disabled: {    
+    type: DataTypes.BOOLEAN,    
+    defaultValue: false  
+  },
   password: {
     type: DataTypes.STRING,
     allowNull: false,

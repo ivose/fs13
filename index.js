@@ -29,7 +29,7 @@ app.use(errorHandler)
 
 const start = async () => {
   await connectToDatabase()
-  await sequelize.sync({ alter: true })
+  //await sequelize.sync({ alter: true })
   app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`)
   })

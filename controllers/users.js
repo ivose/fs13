@@ -1,6 +1,15 @@
 const router = require('express').Router()
 
 const { User, Note, Blog } = require('../models')
+const { tokenExtractor } = require('../util/middleware')
+
+const isAdmin = async (req, res, next) => {
+  const user = await User.findByPk(req.decodedToken.id)
+  if (!user.admin) {
+    return res.status(401).json({ error: 'operation not allowed' })
+  }
+  next()
+}
 
 router.get('/', async (req, res) => {
   const users = await User.findAll({
@@ -28,7 +37,7 @@ router.post('/', async (req, res, next) => {
   }
 })
 
-router.put('/:username', async (req, res, next) => {
+router.put('/:username', tokenExtractor, isAdmin, async (req, res) => {
   try {
     const user = await User.findOne({
       where: {
@@ -41,6 +50,7 @@ router.put('/:username', async (req, res, next) => {
     }
 
     user.name = req.body.name
+    user.disabled = req.body.disabled
     await user.save()
 
     res.json(user)
