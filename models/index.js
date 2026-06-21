@@ -18,8 +18,19 @@ Team.belongsToMany(User, { through: Membership })
 User.belongsToMany(Note, { through: UserNotes, as: 'marked_notes' })
 Note.belongsToMany(User, { through: UserNotes, as: 'users_marked' })
 
-User.belongsToMany(Blog, { through: ReadingList, as: 'readings' })
-Blog.belongsToMany(User, { through: ReadingList, as: 'users_reading' })
+User.belongsToMany(Blog, {
+  through: ReadingList,
+  as: 'readings',
+  foreignKey: 'userId',
+  otherKey: 'blogId'
+})
+
+Blog.belongsToMany(User, {
+  through: ReadingList,
+  as: 'users_reading',
+  foreignKey: 'blogId',
+  otherKey: 'userId'
+})
 
 ReadingList.belongsTo(User)
 ReadingList.belongsTo(Blog)
@@ -33,6 +44,4 @@ module.exports = {
   User,
   Team,
   Membership,
-  UserNotes,
-  ReadingList
 }

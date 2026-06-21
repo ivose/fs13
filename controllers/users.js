@@ -1,6 +1,6 @@
 const router = require('express').Router()
 
-const { User, Note, Blog } = require('../models')
+const { User, Note, Blog, Team } = require('../models')
 const { tokenExtractor } = require('../util/middleware')
 
 const isAdmin = async (req, res, next) => {
@@ -68,12 +68,8 @@ router.put('/:username', tokenExtractor, isAdmin, async (req, res) => {
 
 router.get('/:id', async (req, res) => {
   const user = await User.findByPk(req.params.id, {
-    attributes: { exclude: [''] },
+    attributes: ['name', 'username'],
     include: [
-      {
-        model: Note,
-        attributes: { exclude: ['userId'] }
-      },
       {
         model: Note,
         as: 'marked_notes',
@@ -87,6 +83,14 @@ router.get('/:id', async (req, res) => {
         }
       },
       {
+        model: Blog,
+        as: 'readings',
+        attributes: ['id', 'url', 'title', 'author', 'likes', 'year'],
+        through: {
+          attributes: []
+        }
+      },
+      {
         model: Team,
         attributes: ['name', 'id'],
         through: {
@@ -95,20 +99,10 @@ router.get('/:id', async (req, res) => {
       },
     ]
   })
-  if (user) {
-    //user.note_count = user.notes.length
-    //delete user.notes
-    //res.json(user)
-    //or
-    /*res.json({
-      username: user.username,
-      name: user.name,
-      note_count: user.notes.length
-    })*/
-    res.json(user)
-  } else {
-    res.status(404).end()
+  if (!user) {
+    return res.status(404).end()
   }
+  res.json(user)
 })
 
 module.exports = router
