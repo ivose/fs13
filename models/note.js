@@ -24,6 +24,7 @@ Note.init({
   userId: {
     type: DataTypes.INTEGER,
     allowNull: false,
+    field: 'userId',
     references: { model: 'users', key: 'id' },
   },
 },
