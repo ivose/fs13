@@ -44,4 +44,6 @@ module.exports = {
   User,
   Team,
   Membership,
+  UserNotes,
+  ReadingList
 }
