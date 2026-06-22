@@ -87,7 +87,12 @@ router.get('/:id', async (req, res) => {
         as: 'readings',
         attributes: ['id', 'url', 'title', 'author', 'likes', 'year'],
         through: {
-          attributes: ['read', 'id']
+          attributes: ['read', 'id'],
+          ...(req.query.read !== undefined && ['true','false'].includes(req.query.read) && {
+            where: {
+              read: req.query.read === 'true'
+            }
+          })
         }
       },
       {
