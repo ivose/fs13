@@ -44,7 +44,7 @@ router.post('/', async (req, res, next) => {
   }
 })
 
-router.put('/:username', tokenExtractor, isAdmin, async (req, res) => {
+router.put('/:username', tokenExtractor, isAdmin, async (req, res, next) => {
   try {
     const user = await User.findOne({
       where: {

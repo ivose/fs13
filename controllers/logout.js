@@ -7,7 +7,7 @@ router.delete('/', tokenExtractor, async (req, res, next) => {
   try {
     await Session.destroy({
       where: {
-        token: req.token
+        userId: req.decodedToken.id
       }
     })
 

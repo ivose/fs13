@@ -12,7 +12,7 @@
     "migration:down": "node util/rollback.js",
     "start": "node index.js",
     "start:test": "cross-env TESTING=true node index.js",
-    "test": "cross-env TESTING=true node --test --test-concurrency=1 tests/api_ch3.test.js"
+    "test": "cross-env TESTING=true node --test --test-concurrency=1"
   },
   "dependencies": {
     "dotenv": "^17.4.2",

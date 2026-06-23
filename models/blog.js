@@ -30,6 +30,7 @@ Blog.init({
   year: {
     type: DataTypes.INTEGER,
     allowNull: false,
+    defaultValue: new Date().getFullYear(),
     validate: {
       isInt: {
         msg: 'year must be an integer'
@@ -55,7 +56,7 @@ Blog.init({
   userId: {
     type: DataTypes.INTEGER,
     allowNull: false,
-    field: 'userId',
+    field: 'user_id',
     references: { model: 'users', key: 'id' },
   },
 }, {
