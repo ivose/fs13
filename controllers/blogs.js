@@ -1,7 +1,6 @@
-const jwt = require('jsonwebtoken')
 const router = require('express').Router()
 
-const { SECRET } = require('../util/config')
+const { tokenExtractor } = require('../util/middleware')
 const { Blog, User } = require('../models')
 const { Op } = require('sequelize')
 
@@ -22,14 +21,6 @@ const blogFinder = async (req, res, next) => {
   }
 }
 
-const tokenExtractor = (req) => {
-  const authorization = req.get('authorization')
-  if (authorization && authorization.toLowerCase().startsWith('bearer ')) {
-    return authorization.substring(7)
-  }
-  return null
-}
-
 router.get('/', async (req, res) => {
   const blogs = await Blog.findAll({
     attributes: { exclude: ['userId'] },
@@ -48,19 +39,10 @@ router.get('/', async (req, res) => {
   res.json(blogs)
 })
 
-router.post('/', async (req, res, next) => {
+router.post('/', tokenExtractor, async (req, res, next) => {
   try {
-    const token = tokenExtractor(req)
-    if (!token) {
-      return res.status(401).json({ error: 'token missing' })
-    }
+    const user = await User.findByPk(req.decodedToken.id)
 
-    const decodedToken = jwt.verify(token, SECRET)
-    if (!decodedToken.id) {
-      return res.status(401).json({ error: 'token invalid' })
-    }
-
-    const user = await User.findByPk(decodedToken.id)
     if (!user) {
       return res.status(401).json({ error: 'user not found' })
     }
@@ -93,19 +75,9 @@ Invoke-RestMethod `
   -ContentType "application/json" `
   -Body '{"likes":3}' */
 
-router.delete('/:id', blogFinder, async (req, res, next) => {
+router.delete('/:id', blogFinder, tokenExtractor, async (req, res, next) => {
   try {
-    const token = tokenExtractor(req)
-    if (!token) {
-      return res.status(401).json({ error: 'token missing' })
-    }
-
-    const decodedToken = jwt.verify(token, SECRET)
-    if (!decodedToken.id) {
-      return res.status(401).json({ error: 'token invalid' })
-    }
-
-    if (req.blog.userId !== decodedToken.id) {
+    if (req.blog.userId !== req.decodedToken.id) {
       return res.status(403).json({ error: 'unauthorized' })
     }
 

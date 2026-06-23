@@ -1,8 +1,9 @@
 const jwt = require('jsonwebtoken')
+const crypto = require('crypto')
 const router = require('express').Router()
 
 const { SECRET } = require('../util/config')
-const User = require('../models/user')
+const { User, Session } = require('../models')
 
 router.post('/', async (request, response, next) => {
   try {
@@ -37,14 +38,23 @@ router.post('/', async (request, response, next) => {
     const userForToken = {
       username: user.username,
       id: user.id,
+      jti: crypto.randomUUID()
     }
 
     const token = jwt.sign(userForToken, SECRET)
 
-    response
-      .status(200)
-      .send({ token, username: user.username, name: user.name })
+    await Session.create({
+      token,
+      userId: user.id
+    })
+
+    response.status(200).send({
+        token,
+        username: user.username,
+        name: user.name
+      })
   } catch (error) {
+    console.error('LOGIN ERROR:', error)
     next(error)
   }
 })
